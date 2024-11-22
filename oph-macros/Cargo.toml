@@ -1,0 +1,12 @@
+[package]
+name = "oph-macros"
+version = "0.1.0"
+edition = "2021"
+publish = true
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1.0.37"
+syn = { version = "2.0.89", features = ["full"] }

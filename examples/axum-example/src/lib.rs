@@ -1,14 +1,12 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+use oph_macros::get_response;
+use oph;
+use axum::response::Response;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[get_response]
+fn handler(req: oph::Request) -> oph::Response {
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+    let mut router = Router::new().route("/api/", get(index));
+
+    let response = router.call(request)
+    response
 }
