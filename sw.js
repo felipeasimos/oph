@@ -53,13 +53,13 @@ function writeUtf8ToMemory(app, bytes, start) {
 async function getWasmResponse(event) {
     try {
         const app = wasmModule.instance;
-        const requestBody = event.request.bodyUsed ? new Uint8Array(await event.request.arrayBuffer()) : [];
+        const requestBody = new Uint8Array(await event.request.arrayBuffer()) || [];
         const request = JSON.stringify({
             method: event.request.method,
             url: event.request.url,
             headers: Array.from(event.request.headers),
-            body: requestBody
-        })
+            body: Array.from(requestBody)
+        });
         const bytes = utf8enc.encode(request);
         const len = bytes.length;
         const requestPtr = app.exports.__oph_function_allocate_request(len);
@@ -72,10 +72,8 @@ async function getWasmResponse(event) {
         const responseBody = utf8dec.decode(new Uint8Array(response.body));
 
         return new Response(responseBody, {
-            response: {
-                status: response.status,
-                headers: response.headers
-            }
+            status: response.status,
+            headers: response.headers
         });
     } catch(error) {
         console.error("error querying wasm app for result", { error, event })
