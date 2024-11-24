@@ -3,10 +3,16 @@ name = "axum-example"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+crate-type = ["cdylib"]
+
 [dependencies]
-axum = "0.7.7"
+axum = { version = "0.7.7", default-features = false }
+futures-executor = "0.3.31"
+http = "1.1.0"
 oph = { path = "../../oph/" }
 oph-macros = { path = "../../oph-macros/" }
+tower-service = "0.3.3"
 
 [profile.release]
 strip = true

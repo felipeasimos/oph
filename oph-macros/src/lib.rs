@@ -18,7 +18,7 @@ pub fn get_response(_attr: TokenStream, item: TokenStream) -> TokenStream {
             if let Some(ref request_bytes) = rs.request {
                 rs.response = match oph::serde_json::from_slice(request_bytes) {
                     Ok(request) => {
-                        match oph::serde_json::to_string(&#fn_name(&request)) {
+                        match oph::serde_json::to_string(&#fn_name(request)) {
                             Ok(json_str) => Some(json_str.as_bytes().to_vec()),
                             Err(_) => Some("Failed to serialize response to string".bytes().collect()),
                         }

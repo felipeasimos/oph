@@ -1,5 +1,5 @@
 #[oph_macros::get_response]
-fn handler(req: &oph::Request) -> oph::Response {
+fn handler(req: oph::Request) -> oph::Response {
 
     oph::Response {
         status: oph::http::status::StatusCode::OK,

@@ -1,5 +1,5 @@
 let wasmModule = null;
-const appUri = './target/wasm32-unknown-unknown/debug/raw_example.wasm';
+const appUri = './target/wasm32-unknown-unknown/debug/axum_example.wasm';
 
 async function loadWasmApp() {
     console.log('loading wasm app...')
