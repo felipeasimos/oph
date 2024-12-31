@@ -2,7 +2,7 @@
 
 Small middleware for helping you implement server-on-client solutions with rust.
 
-Idea initially based on [`wasm-service`](https://github.com/richardanaya/wasm-service), which presented me the whole server-on-client concept.
+Idea inspired by [`wasm-service`](https://github.com/richardanaya/wasm-service), which presented me to the server-on-client concept.
 
 ## Features
 
@@ -14,30 +14,27 @@ Idea initially based on [`wasm-service`](https://github.com/richardanaya/wasm-se
 ## How to Use
 
 ### In Rust:
+
 * annotate a function with `#[oph::get_response]`. The function should receive a `Request` and return a `Response`.
 
 ```
-use oph;
-#[oph::get_response]
-fn get_oph_response(req: oph::Request) {
-    oph::Response(
-        oph::method::POST,
-        req.uri,
-        req.headers,
-        "<p>This is the body</p>"
-    )
+#[oph_macros::get_response]
+fn handler(req: oph::Request) -> oph::Response {
+
+    oph::Response {
+        status: oph::http::status::StatusCode::OK,
+        headers: vec![("Content-Type".to_string(), "text/html".to_string())],
+        body: b"<p>hello world!<p>".to_vec()
+    }
 }
 ```
 
-this will create an exported wasm function called `__oph_function_get_response` in the final `.wasm`.
-
 ### In Javascript:
-* Pass the server WASM module to the `Oph` constructor and `serve` it.
+
+* Pass the server `.wasm` URL to the `Oph` constructor and `serve` it.
 
 ```
-const server_in_wasm = await fetch("server.wasm");
-const module = new WebAssembly.Module(server_in_wasm.arrayBuffer())
-Oph(module).serve();
+Oph("server.wasm").serve();
 ```
 
-That's it! A service worker will then intercept all requests and forward them to `get_response`.
+That's it! A service worker will then intercept all requests and forward them to the function marked with `get_response` in the Rust world.
