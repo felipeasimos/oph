@@ -10,19 +10,38 @@ export class Oph {
         this.wasmURL = url;
     }
 
-    async registerServiceWorker() {
+    private postMessages(sw: ServiceWorkerRegistration) {
+        if(sw.active) {
+            sw.active.postMessage({ type: 'clientattached', value: this.wasmURL })
+            console.log('message posted')
+        } else {
+            console.log('sw is not active so no message was posted')
+        }
+    }
+
+    private async registerServiceWorker() {
         const serviceWorkerKey = 'serviceWorker';
         if(navigator[serviceWorkerKey]) {
-            const sw = await navigator.serviceWorker.register("ophSW.js")
-            sw.active.postMessage({ type: 'clientattached' })
-            sw.active.postMessage({ type: 'wasmURL', value: this.wasmURL})
+            const sw = await navigator.serviceWorker.register("./ophSW.js")
+            sw.addEventListener('updatefound', () => {
+                const installing = sw.installing;
+                if(!sw.installing && sw.active) {
+                    this.postMessages(sw)
+                } else {
+                    installing.addEventListener('statechange', () => {
+                        if(installing.state === 'activated') {
+                            this.postMessages(sw)
+                        }
+                    })
+                }
+            })
             return sw;
         }
         const error = `'${serviceWorkerKey}' is missing from navigator. Is this localhost or https?`
         throw new Error(error)
     }
 
-    async setupSyncEventListeners(sw: ServiceWorkerRegistration) {
+    private async setupSyncEventListeners(sw: ServiceWorkerRegistration) {
         // @ts-ignore
         window.addEventListener("online", () => {
             sw.active.postMessage({ 
@@ -39,7 +58,7 @@ export class Oph {
         })
     }
 
-    async serve() {
+    public async serve() {
         this.sw = await this.registerServiceWorker()
         await this.setupSyncEventListeners(this.sw);
     }

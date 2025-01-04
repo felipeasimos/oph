@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Oph</title>
+</head>
+
+<body>
+  <h1>Oph</h1>
+  <p> oph </p>
+  <script type="module">
+    import { Oph } from './node_modules/@felipeasimos/oph/lib/index.js';
+    const oph = new Oph("http://localhost:8080/raw_example.wasm")
+    await oph.serve()
+    console.log('oph started serving')
+  </script>
+</body>
+
+</html>

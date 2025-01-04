@@ -1,5 +1,5 @@
 let wasmModule: WebAssembly.WebAssemblyInstantiatedSource | null = null;
-let wasmURL: URL | null = null;
+let wasmURL: string | null = null;
 let isOnline: boolean = true;
 
 async function loadWasmApp() {
@@ -7,7 +7,8 @@ async function loadWasmApp() {
         return;
     }
     const response = await fetch(wasmURL, { cache: "no-cache" });
-    wasmModule = await WebAssembly.instantiateStreaming(response, {});
+    const buffer = await response.arrayBuffer();
+    wasmModule = await WebAssembly.instantiate(buffer, {});
 }
 
 async function updateIsOnline(value: boolean) {
@@ -17,8 +18,13 @@ async function updateIsOnline(value: boolean) {
     }
 }
 
+async function clientAttached(newWasmURL: string) {
+    wasmURL = newWasmURL;
+    await loadWasmApp();
+}
+
 // Periodically check for new wasm app version
-setInterval(() => loadWasmApp(), 1 + (Math.random() * 14 * 60 * 1000));
+// setInterval(() => loadWasmApp(), 1 + (Math.random() * 14 * 60 * 1000));
 
 self.addEventListener('install', async (event: ExtendableEvent) => {
     console.log('service worker lifecyle event: install');
@@ -35,14 +41,11 @@ self.addEventListener('activate', (event: ExtendableEvent) => {
 
 self.addEventListener('message', (event: ExtendableMessageEvent) => {
     if(event.data.type === 'clientattached') {
-        event.waitUntil(loadWasmApp())
-        return;
+        event.waitUntil(clientAttached(event.data.value));
     }
     if(event.data.type === 'sync') {
         event.waitUntil(updateIsOnline(event.data.value));
-    }
-    if(event.data.type === 'wasmURL') {
-        wasmURL = new URL(event.data.value);
+        console.log('sync event received')
     }
 })
 
@@ -108,7 +111,7 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 
     const useWasmServer = 
         !(url.pathname == "/")
-        && !url.pathname.endsWith(wasmURL.pathname)
+        && !url.pathname.endsWith(wasmURL)
         && !url.pathname.endsWith(".js")
         && !url.pathname.endsWith(".html")
         && wasmModule;

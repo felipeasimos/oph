@@ -34,7 +34,8 @@ fn handler(req: oph::Request) -> oph::Response {
 * Pass the server `.wasm` URL to the `Oph` constructor and `serve` it.
 
 ```
-Oph("server.wasm").serve();
+const oph = new Oph("server.wasm")
+oph.serve();
 ```
 
 That's it! A service worker will then intercept all requests and forward them to the function marked with `get_response` in the Rust world.

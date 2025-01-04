@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "target": "ES2017",
+    "module": "ESNext",
     "lib": [
       "es5",
-      "es2015",
-      "es2015.collection"
+      "es2017",
+      "es2017"
     ],
     "declaration": true,
     "declarationMap": true,
