@@ -2,7 +2,7 @@
   "name": "raw-example",
   "version": "1.0.0",
   "description": "simplest example of using oph",
-  "main": "index.js",
+  "main": "",
   "scripts": {
     "link-static-files": "ln -sf node_modules/@felipeasimos/oph/lib/ophSW.js ophSW.js && ln -sf ../../target/wasm32-unknown-unknown/debug/raw_example.wasm raw_example.wasm",
     "serve": "npm run link-static-files && npx http-serve"

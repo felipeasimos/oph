@@ -1,10 +1,11 @@
 {
   "name": "axum-example",
   "version": "1.0.0",
-  "description": "test for oph, using axum",
-  "main": "index.js",
+  "description": "axum example of using oph",
+  "main": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "link-static-files": "ln -sf node_modules/@felipeasimos/oph/lib/ophSW.js ophSW.js && ln -sf ../../target/wasm32-unknown-unknown/debug/axum_example.wasm axum_example.wasm",
+    "serve": "npm run link-static-files && npx http-serve"
   },
   "repository": {
     "type": "git",
