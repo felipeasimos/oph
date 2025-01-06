@@ -1,6 +1,7 @@
 let wasmModule: WebAssembly.WebAssemblyInstantiatedSource | null = null;
 let wasmURL: string | null = null;
 let isOnline: boolean = true;
+let allowFunction: (url: URL) => boolean = (url: URL) => true;
 
 async function loadWasmApp() {
     if(!isOnline || !wasmURL) {
@@ -18,7 +19,8 @@ async function updateIsOnline(value: boolean) {
     }
 }
 
-async function clientAttached(newWasmURL: string) {
+async function clientAttached(newWasmURL: string, allowFunctionSerialized: string) {
+    allowFunction = new Function(`return (${allowFunctionSerialized})`)();
     wasmURL = newWasmURL;
     await loadWasmApp();
 }
@@ -41,7 +43,11 @@ self.addEventListener('activate', (event: ExtendableEvent) => {
 
 self.addEventListener('message', (event: ExtendableMessageEvent) => {
     if(event.data.type === 'clientattached') {
-        event.waitUntil(clientAttached(event.data.value));
+        const {
+            wasmURL,
+            allowFunctionSerialized
+        } = event.data.value;
+        event.waitUntil(clientAttached(wasmURL, allowFunctionSerialized));
     }
     if(event.data.type === 'sync') {
         event.waitUntil(updateIsOnline(event.data.value));
@@ -109,12 +115,11 @@ self.addEventListener('fetch', (event: FetchEvent) => {
     const url = new URL(event.request.url)
     console.log('fetch event: ', url.toString());
 
-    const useWasmServer = 
-        !(url.pathname == "/")
-        && !url.pathname.endsWith(wasmURL)
-        && !url.pathname.endsWith(".js")
-        && !url.pathname.endsWith(".html")
-        && wasmModule;
+    const useWasmServer = !url.pathname.endsWith(wasmURL)
+        && wasmModule
+        && !(url.pathname === "/")
+        && !url.pathname.endsWith('ophSW.js')
+        && allowFunction(url);
     if (!useWasmServer) {
         console.log("not using wasm server for this request")
         console.log(wasmModule)
