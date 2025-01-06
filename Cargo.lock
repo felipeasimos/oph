@@ -3,10 +3,6 @@
 version = 4
 
 [[package]]
-name = "actix-example"
-version = "0.1.0"
-
-[[package]]
 name = "async-trait"
 version = "0.1.83"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -175,10 +171,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hyper-example"
-version = "0.1.0"
-
-[[package]]
 name = "itoa"
 version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -239,10 +231,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
-name = "poem-example"
-version = "0.1.0"
-
-[[package]]
 name = "proc-macro2"
 version = "1.0.92"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -267,10 +255,6 @@ dependencies = [
  "oph",
  "oph-macros",
 ]
-
-[[package]]
-name = "rocket-example"
-version = "0.1.0"
 
 [[package]]
 name = "rustversion"

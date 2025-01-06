@@ -19,11 +19,20 @@ async fn index() -> Html<&'static str> {
 #[oph_macros::get_response]
 fn handler(req: oph::Request) -> oph::Response {
 
-    let request: Request<String> = Request::builder()
+    let mut request_builder = Request::builder()
         .uri(req.url.clone())
+        .method(req.method);
+
+    request_builder = req.headers
+        .iter()
+        .fold(request_builder, |acc, (h ,v)| acc.header(h, v));
+
+    let request: Request<String> = request_builder
         .body(String::from_utf8(req.body.clone()).unwrap())
         .unwrap();
+
     let response = block_on(app(request));
+
     let headers = response
         .headers()
         .iter()

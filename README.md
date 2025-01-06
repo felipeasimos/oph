@@ -6,10 +6,13 @@ Idea inspired by [`wasm-service`](https://github.com/richardanaya/wasm-service),
 
 ## Features
 
-* Use whatever rust web framework you want!¹
 * Static hosting friendly! (Github Pages, Neocities, etc)
+* Easier to share code between client-server and server-server in offline-first applications!
 
-¹ NOTE: the rust framework of choice should support wasm, like most of them do!
+NOTE¹: the rust framework of choice should support the `wasm32-unknown-unknown` target, like the ones in the `examples/` folder!
+NOTE²: turns out a lot of rust server frameworks actually don't support `wasm32-unknown-unknown`! This is due to `sys` / `net` crate dependency (most cases) and `getrandom` (warp).
+
+TODO: Expand use to `wasm32-wasi` target
 
 ## How to Use
 
@@ -63,10 +66,10 @@ npm i
 npm run serve
 ```
 
-3. Access `localhost:8080` and see the response in the console by typing²:
+3. Access `localhost:8080` and see the response in the console by typing³:
 
 ```
 (await fetch('http://localhost:8080/hi')).text()
 ```
 
-NOTE²: you may need to unregister the service worker to see different responses when switching between examples
+NOTE³: you may need to unregister the service worker to see different responses when switching between examples
