@@ -11,28 +11,36 @@ export class Oph {
     }
 
     private postMessages(sw: ServiceWorkerRegistration) {
-        if(sw.active) {
-            sw.active.postMessage({ type: 'clientattached', value: this.wasmURL })
+        const active = sw.active
+        if(active) {
+            active.postMessage({ type: 'clientattached', value: this.wasmURL })
             console.log('message posted')
-        } else {
-            console.log('sw is not active so no message was posted')
+            return true;
         }
+        throw Error('sw is not active so no message was posted')
     }
 
     private async registerServiceWorker() {
         const serviceWorkerKey = 'serviceWorker';
         if(navigator[serviceWorkerKey]) {
             const sw = await navigator.serviceWorker.register("./ophSW.js")
-            sw.addEventListener('updatefound', () => {
-                const installing = sw.installing;
-                if(!sw.installing && sw.active) {
-                    this.postMessages(sw)
-                } else {
-                    installing.addEventListener('statechange', () => {
-                        if(installing.state === 'activated') {
-                            this.postMessages(sw)
-                        }
-                    })
+            await new Promise((resolve) => {
+                sw.addEventListener('updatefound', () => {
+                    const installing = sw.installing;
+                    if(!sw.installing && this.postMessages(sw)) {
+                        console.log('immediately')
+                        resolve(0)
+                    } else {
+                        installing.addEventListener('statechange', () => {
+                            if(installing.state === 'activated' && this.postMessages(sw)) {
+                                console.log('statechange')
+                                resolve(0)
+                            }
+                        })
+                    }
+                })
+                if(this.postMessages(sw)) {
+                    resolve(0)
                 }
             })
             return sw;

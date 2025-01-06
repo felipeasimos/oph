@@ -6,13 +6,11 @@ Idea inspired by [`wasm-service`](https://github.com/richardanaya/wasm-service),
 
 ## Features
 
-* Static hosting friendly! (Github Pages, Neocities, etc)
+* Static hosting friendly! (Github Pages, Neocities, etc)¹
 * Easier to share code between client-server and server-server in offline-first applications!
 
-NOTE¹: the rust framework of choice should support the `wasm32-unknown-unknown` target, like the ones in the `examples/` folder!
-NOTE²: turns out a lot of rust server frameworks actually don't support `wasm32-unknown-unknown`! This is due to `sys` / `net` crate dependency (most cases) and `getrandom` (warp).
-
-TODO: Expand use to `wasm32-wasi` target
+NOTE¹: most rust backend frameworks don't support `wasm32-unknown-unknown` (only `axum` apparently). This is due to the need for native dependencies.
+WASI targets are the alternative, but [WASI and its support in the browser is not good enough](https://wasi.dev/interfaces) to make an effort towards making most frameworks WASI-compatible there.
 
 ## How to Use
 
@@ -41,7 +39,11 @@ const oph = new Oph("server.wasm")
 oph.serve();
 ```
 
-That's it! A service worker will then intercept all requests and forward them to the function marked with `get_response` in the Rust world.
+### In your server config
+
+* Have `/ophSW.js` return the `ophSW.js` file from the library
+
+That's it! A service worker will then intercept all in-browser requests in that domain and forward them to the function marked with `get_response` in the Rust world.
 
 ## Running Examples
 
@@ -72,4 +74,4 @@ npm run serve
 (await fetch('http://localhost:8080/hi')).text()
 ```
 
-NOTE³: you may need to unregister the service worker to see different responses when switching between examples
+NOTE²: you may need to unregister the service worker to see different responses when switching between examples
